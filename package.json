@@ -1,0 +1,102 @@
+{
+  "name": "jira-task-printer",
+  "version": "0.1.0",
+  "author": "ganyang <ganyang@cjiedata.com>",
+  "description": "A web version of jira task printer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/garyganyang/jira-task-printer-web.git"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve --mode jira-dev",
+    "build-jira": "vue-cli-service build --mode jira",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "js-base64": "^3.7.1",
+    "vue-print-nb": "^1.7.5",
+    "axios": "0.21.1",
+    "core-js": "^3.9.1",
+    "vue": "^2.6.12",
+    "vue-router": "^3.5.1",
+    "vuex": "^3.6.2",
+    "element-ui": "2.15.1",
+    "moment": "2.29.1",
+    "mysql": "2.18.1",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-airbnb": "^5.0.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "less": "^3.0.4",
+    "less-loader": "^5.0.0",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/recommended",
+      "@vue/airbnb"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {
+      "vue/html-closing-bracket-spacing": [
+        "warn",
+        {
+          "selfClosingTag": "never"
+        }
+      ],
+      "vue/html-closing-bracket-newline": [
+        "error",
+        {
+          "multiline": "never"
+        }
+      ],
+      "vue/max-attributes-per-line": [
+        2,
+        {
+          "singleline": 10,
+          "multiline": {
+            "max": 1,
+            "allowFirstLine": true
+          }
+        }
+      ],
+      "vue/singleline-html-element-content-newline": "off",
+      "vue/multiline-html-element-content-newline": "off",
+      "no-console": "off",
+      "no-unreachable": 2,
+      "max-len": [
+        "error",
+        {
+          "code": 300
+        }
+      ],
+      "indent": [
+        2,
+        2,
+        {
+          "SwitchCase": 1
+        }
+      ]
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
