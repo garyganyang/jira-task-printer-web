@@ -352,6 +352,7 @@ export default {
       JiraService.getIssueByIdOrKey(this.formInline.key.toUpperCase())
         .then((res) => {
           if (res.data.fields.parent) {
+            res.data.fields.timeoriginalestimate = res.data.fields.timeoriginalestimate / 3600;
             this.subTasks = [res.data];
             JiraService.getIssueByIdOrKey(res.data.fields.parent.id)
               .then((issue) => {
