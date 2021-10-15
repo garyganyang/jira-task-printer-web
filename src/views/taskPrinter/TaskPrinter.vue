@@ -336,6 +336,7 @@ export default {
         copyOfEachSubTask.fields.created = theIssue.fields.created;
         copyOfEachSubTask.fields.assignee = theIssue.fields.assignee;
         copyOfEachSubTask.fields.creator = theIssue.fields.creator;
+        copyOfEachSubTask.fields.description = theIssue.fields.description;
         copyOfEachSubTask.fields.timeoriginalestimate = theIssue.fields.timeoriginalestimate / 3600;
         return copyOfEachSubTask;
       });
@@ -352,6 +353,7 @@ export default {
       JiraService.getIssueByIdOrKey(this.formInline.key.toUpperCase())
         .then((res) => {
           if (res.data.fields.parent) {
+            // eslint-disable-next-line no-param-reassign,operator-assignment
             res.data.fields.timeoriginalestimate = res.data.fields.timeoriginalestimate / 3600;
             this.subTasks = [res.data];
             JiraService.getIssueByIdOrKey(res.data.fields.parent.id)
