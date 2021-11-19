@@ -192,9 +192,9 @@
                     子任务:[{{ item.key }}]{{ item.fields.summary }}
                   </div>
                   <div class="flex bt bl br">
-                    <div class="flex centralised">
+                    <div class="flex centralised" style="height: 38px">
                       <div class=" label padding">主任务</div>
-                      <div class="flex-1 padding bl ellipsis font-sm">
+                      <div class="flex-1 padding bl ellipsis font-sm sub-summary">
                         <span class="bold">[{{ selectedIssue.key }}]</span>
                         {{ selectedIssue.fields.summary }}
                       </div>
@@ -263,17 +263,17 @@ export default {
       selectedIssue: {
         fields: {
           epic: { name: '' },
-          fixVersions: [],
-        },
+          fixVersions: []
+        }
       },
       selectedSubTasks: [],
       sprintsStatusMap: {
         active: '进行中',
         closed: '已关闭',
-        future: '未开始',
+        future: '未开始'
       },
       myself: { avatarUrls: {} },
-      loading: false,
+      loading: false
     };
   },
   mounted() {
@@ -297,7 +297,7 @@ export default {
             });
         })
         .catch((reason) => {
-          this.$message.error(reason.response.data.errorMessages[0]);
+          this.$message.error(reason.response ? reason.response.data.errorMessages[0] : reason.message);
           this.$refs.DialogConfig.show();
         });
     },
@@ -380,8 +380,8 @@ export default {
     },
     handleSubTasksSelectionChange(rows) {
       this.selectedSubTasks = rows;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less">
@@ -457,6 +457,14 @@ export default {
     .summary {
       font-weight: bold;
       font-size: 20px;
+      overflow: hidden;
+      display: -webkit-box;
+      text-overflow: ellipsis;
+      -webkit-line-clamp: 2; /*要显示的行数*/
+      -webkit-box-orient: vertical;
+    }
+
+    .sub-summary{
       overflow: hidden;
       display: -webkit-box;
       text-overflow: ellipsis;
