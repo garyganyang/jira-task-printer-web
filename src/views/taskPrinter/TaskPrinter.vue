@@ -21,7 +21,10 @@
       <div class="operation-row">
         <el-form :inline="true" :model="formInline" size="small" class="" @submit.native.prevent>
           <el-form-item label="项目">
-            <el-select v-model="formInline.projectId" placeholder="选择项目" filterable @change="getAllSprints">
+            <el-select v-model="formInline.projectId"
+                       placeholder="选择项目"
+                       filterable
+                       @change="getAllSprints">
               <el-option v-for="(item,index) in projects"
                          :key="index"
                          :label="item.name"
@@ -44,6 +47,17 @@
                 <span style="float: right; color: #8492a6; font-size: 13px">
                   {{ sprintsStatusMap[item.state] }}</span>
               </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select v-model="formInline.status"
+                       placeholder="任务状态"
+                       @change="(data) => getIssuesForStatus(data)">
+              <el-option v-for="(item,index) in issuesStatus"
+                         :key="index"
+                         :label="item"
+                         :value="item"/>
+            <!--              </el-option>-->
             </el-select>
           </el-form-item>
           <el-form-item label="任务Key">
@@ -259,21 +273,30 @@ export default {
       sprints: [],
       allIssues: [],
       issues: [],
+      cache: [],
       subTasks: [],
+      issuesStatus: [
+        '待办',
+        '处理中',
+        '完成',
+      ],
       selectedIssue: {
         fields: {
           epic: { name: '' },
-          fixVersions: []
-        }
+          fixVersions: [],
+        },
       },
       selectedSubTasks: [],
       sprintsStatusMap: {
         active: '进行中',
         closed: '已关闭',
-        future: '未开始'
+        future: '未开始',
+      },
+      issuesStatusMap: {
+
       },
       myself: { avatarUrls: {} },
-      loading: false
+      loading: false,
     };
   },
   mounted() {
@@ -303,6 +326,7 @@ export default {
     },
     getAllSprints(boardId) {
       this.formInline.sprintId = '';
+      this.formInline.status = '';
       this.getAllIssue(boardId);
       JiraService.getAllSprints(boardId)
         .then((res) => {
@@ -316,15 +340,25 @@ export default {
       //   });
     },
     getIssuesForSprint(sprintId) {
+      this.formInline.status = '';
       this.loading = true;
       JiraService.getIssuesForSprint(this.formInline.projectId, sprintId)
         .then((res) => {
           this.allIssues = res.data.issues;
           this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'id', 'desc');
+          this.cache = this.issues;
         })
         .finally(() => {
           this.loading = false;
         });
+    },
+    getIssuesForStatus(data) {
+      this.loading = true;
+      this.issues = this.cache;
+      if (this.issues.length) {
+        this.issues = orderBy(this.issues.filter((v) => v.fields.status.name === data), 'id', 'desc');
+      }
+      this.loading = false;
     },
     onIssueClick(row) {
       console.log(row);
@@ -380,8 +414,8 @@ export default {
     },
     handleSubTasksSelectionChange(rows) {
       this.selectedSubTasks = rows;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="less">
