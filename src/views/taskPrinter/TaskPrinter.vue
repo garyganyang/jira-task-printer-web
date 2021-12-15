@@ -52,12 +52,11 @@
           <el-form-item label="状态">
             <el-select v-model="formInline.status"
                        placeholder="任务状态"
-                       @change="(data) => getIssuesForStatus(data)">
+                       @change="getIssuesForStatus">
               <el-option v-for="(item,index) in issuesStatus"
                          :key="index"
                          :label="item"
                          :value="item"/>
-            <!--              </el-option>-->
             </el-select>
           </el-form-item>
           <el-form-item label="任务Key">
@@ -273,30 +272,28 @@ export default {
       sprints: [],
       allIssues: [],
       issues: [],
-      cache: [],
+      copyOfIssues: [],
       subTasks: [],
       issuesStatus: [
         '待办',
         '处理中',
-        '完成',
+        '完成'
       ],
       selectedIssue: {
         fields: {
           epic: { name: '' },
-          fixVersions: [],
-        },
+          fixVersions: []
+        }
       },
       selectedSubTasks: [],
       sprintsStatusMap: {
         active: '进行中',
         closed: '已关闭',
-        future: '未开始',
+        future: '未开始'
       },
-      issuesStatusMap: {
-
-      },
+      issuesStatusMap: {},
       myself: { avatarUrls: {} },
-      loading: false,
+      loading: false
     };
   },
   mounted() {
@@ -346,17 +343,17 @@ export default {
         .then((res) => {
           this.allIssues = res.data.issues;
           this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'id', 'desc');
-          this.cache = this.issues;
+          this.copyOfIssues = this.issues;
         })
         .finally(() => {
           this.loading = false;
         });
     },
-    getIssuesForStatus(data) {
+    getIssuesForStatus(status) {
       this.loading = true;
-      this.issues = this.cache;
+      this.issues = this.copyOfIssues;
       if (this.issues.length) {
-        this.issues = orderBy(this.issues.filter((v) => v.fields.status.name === data), 'id', 'desc');
+        this.issues = this.issues.filter((v) => v.fields.status.name === status);
       }
       this.loading = false;
     },
@@ -414,8 +411,8 @@ export default {
     },
     handleSubTasksSelectionChange(rows) {
       this.selectedSubTasks = rows;
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less">
@@ -498,7 +495,7 @@ export default {
       -webkit-box-orient: vertical;
     }
 
-    .sub-summary{
+    .sub-summary {
       overflow: hidden;
       display: -webkit-box;
       text-overflow: ellipsis;
