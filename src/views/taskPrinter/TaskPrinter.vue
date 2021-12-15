@@ -312,7 +312,7 @@ export default {
             });
           JiraService.getAllAgileBoard()
             .then((res) => {
-              this.projects = orderBy(res.data.values, 'name', 'desc');
+              this.projects = orderBy(res.data.values.filter(e => !e.name.includes('已结束')), 'name', 'desc');
               // this.projects = res.data.values;
             });
         })
