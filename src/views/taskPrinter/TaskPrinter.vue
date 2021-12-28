@@ -256,7 +256,7 @@
 
 <script>
 // @ is an alias to /src
-import { orderBy } from 'lodash';
+import { orderBy, uniq } from 'lodash';
 // import { getAction } from '@/service/axiosInterceptor';
 import JiraService from '@/service/JiraService';
 import * as moment from 'moment';
@@ -275,11 +275,7 @@ export default {
       issues: [],
       cache: [],
       subTasks: [],
-      issuesStatus: [
-        '待办',
-        '处理中',
-        '完成',
-      ],
+      issuesStatus: [],
       selectedIssue: {
         fields: {
           epic: { name: '' },
@@ -346,6 +342,7 @@ export default {
         .then((res) => {
           this.allIssues = res.data.issues;
           this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'id', 'desc');
+          this.issuesStatus = uniq(res.data.issues.map((e) => e.fields.status.name), true);
           this.cache = this.issues;
         })
         .finally(() => {
