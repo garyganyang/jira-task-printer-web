@@ -8,7 +8,8 @@
     "url": "https://github.com/garyganyang/jira-task-printer-web.git"
   },
   "scripts": {
-    "serve": "vue-cli-service serve --mode jira-dev",
+    "serve": "vue-cli-service serve --mode dev",
+    "serve-jira": "vue-cli-service serve --mode jira-dev",
     "build-jira": "vue-cli-service build --mode jira",
     "lint": "vue-cli-service lint"
   },
@@ -46,8 +47,7 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/recommended",
-      "@vue/airbnb"
+      "plugin:vue/recommended"
     ],
     "parserOptions": {
       "parser": "babel-eslint"

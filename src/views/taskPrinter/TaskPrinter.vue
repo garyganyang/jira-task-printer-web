@@ -4,9 +4,20 @@
       <el-row style="margin-top: 4px">
         <el-col :span="12" style="text-align: left;font-size: 24px;">
           Jira 任务打印程序
+          <el-popover title="版本说明"
+                      width="200"
+                      trigger="hover">
+            <p>2022-01-14</p>
+            <p>1. 修复状态查询;</p>
+            <p>2. 修复预估时间精度显示问题.</p>
+            <p>3. 支持bug类型显示.</p>
+            <p>4. 支持列排序.</p>
+            <el-button slot="reference" type="text">v 1.0.2</el-button>
+          </el-popover>
           <el-link href="http://192.168.0.45:8090/pages/viewpage.action?pageId=5767175"
                    type="warning"
-                   target="_blank">打印机驱动下载
+                   target="_blank"
+                   style="margin-left: 10px">打印机驱动下载
           </el-link>
         </el-col>
         <el-col :span="12" style="text-align: right; line-height: 32px">
@@ -86,16 +97,29 @@
                       height="calc(52vh)"
                       @row-click="onIssueClick">
               <!--<el-table-column type="selection" width="55" align="center"/>-->
-              <el-table-column prop="key" label="Key" align="center" width="100"/>
-              <el-table-column prop="fields.summary" label="任务名称"/>
+              <el-table-column prop="key" label="Key" sortable align="center" width="100"/>
+              <el-table-column prop="fields.issuetype.name" sortable label="任务类型" width="100" align="center" header-align="left">
+                <template slot-scope="scope">
+                  <el-tag v-if="scope.row.fields.issuetype.name === '故障' || scope.row.fields.issuetype.name === 'Bug'"
+                          size="mini"
+                          type="danger">Bug
+                  </el-tag>
+                  <el-tag v-else size="mini" type="success">{{ scope.row.fields.issuetype.name }}</el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column prop="fields.summary" sortable label="任务名称"/>
               <el-table-column prop="fields.sprint.name" label="Sprint" width="200"/>
-              <el-table-column prop="fields.assignee.displayName" label="经办人" width="100"/>
-              <el-table-column prop="fields.creator.displayName" label="报告人" width="100"/>
-              <el-table-column prop="fields.status.name" label="状态" width="100">
+              <el-table-column prop="fields.assignee.displayName" sortable label="经办人" width="100"/>
+              <el-table-column prop="fields.creator.displayName" sortable label="报告人" width="100"/>
+              <el-table-column prop="fields.status.name" sortable label="状态" width="100" align="center" header-align="left">
                 <template slot-scope="scope">
                   <el-tag v-if="scope.row.fields.status.name === '待办'"
                           size="mini"
                           type="info">待办
+                  </el-tag>
+                  <el-tag v-else-if="scope.row.fields.status.name === '待处理'"
+                          size="mini"
+                          type="info">待处理
                   </el-tag>
                   <el-tag v-else-if="scope.row.fields.status.name === '处理中'"
                           size="mini"
@@ -103,12 +127,20 @@
                   </el-tag>
                   <el-tag v-else-if="scope.row.fields.status.name === '完成'"
                           size="mini"
-                          type="success">完成
+                          type="warning">完成
+                  </el-tag>
+                  <el-tag v-else-if="scope.row.fields.status.name === '已解决'"
+                          size="mini"
+                          type="success">已解决
+                  </el-tag>
+                  <el-tag v-else-if="scope.row.fields.status.name === '直接关闭'"
+                          size="mini"
+                          type="danger">直接关闭
                   </el-tag>
                   <span v-else>{{ scope.row.fields.status.name }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="fields.status.name" label="版本" width="120">
+              <el-table-column prop="fields.status.name" sortable label="版本" width="120">
                 <template slot-scope="scope">
                   <el-tag v-for="(item,index) in scope.row.fields.fixVersions"
                           :key="index"
@@ -137,6 +169,10 @@
                           size="mini"
                           type="info">待办
                   </el-tag>
+                  <el-tag v-else-if="scope.row.fields.status.name === '待处理'"
+                          size="mini"
+                          type="info">待处理
+                  </el-tag>
                   <el-tag v-else-if="scope.row.fields.status.name === '处理中'"
                           size="mini"
                           type="danger">处理中
@@ -144,6 +180,14 @@
                   <el-tag v-else-if="scope.row.fields.status.name === '完成'"
                           size="mini"
                           type="success">完成
+                  </el-tag>
+                  <el-tag v-else-if="scope.row.fields.status.name === '已解决'"
+                          size="mini"
+                          type="success">已解决
+                  </el-tag>
+                  <el-tag v-else-if="scope.row.fields.status.name === '直接关闭'"
+                          size="mini"
+                          type="success">直接关闭
                   </el-tag>
                   <span v-else>{{ scope.row.fields.status.name }}</span>
                 </template>
@@ -161,7 +205,7 @@
             <div style="width: 354px;margin:0 auto">
               <div id="printTask" class="jira-task">
                 <div class="summary bt bl br padding">
-                  任务:[{{ selectedIssue.key }}]{{ selectedIssue.fields.summary }}
+                  {{ selectedIssue.fields.issuetype.name }}:[{{ selectedIssue.key }}]{{ selectedIssue.fields.summary }}
                 </div>
                 <div class="flex bt bl br">
                   <div class="flex">
@@ -274,11 +318,7 @@ export default {
       issues: [],
       copyOfIssues: [],
       subTasks: [],
-      issuesStatus: [
-        '待办',
-        '处理中',
-        '完成'
-      ],
+      issuesStatus: [],
       selectedIssue: {
         fields: {
           epic: { name: '' },
@@ -343,6 +383,7 @@ export default {
         .then((res) => {
           this.allIssues = res.data.issues;
           this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'id', 'desc');
+          this.issuesStatus = Array.from(new Set(res.data.issues.map(e => e.fields.status.name)));
           this.copyOfIssues = this.issues;
         })
         .finally(() => {
@@ -368,7 +409,7 @@ export default {
         copyOfEachSubTask.fields.assignee = theIssue.fields.assignee;
         copyOfEachSubTask.fields.creator = theIssue.fields.creator;
         copyOfEachSubTask.fields.description = theIssue.fields.description;
-        copyOfEachSubTask.fields.timeoriginalestimate = theIssue.fields.timeoriginalestimate / 3600;
+        copyOfEachSubTask.fields.timeoriginalestimate = (theIssue.fields.timeoriginalestimate / 3600).toFixed(1);
         return copyOfEachSubTask;
       });
     },
@@ -385,7 +426,7 @@ export default {
         .then((res) => {
           if (res.data.fields.parent) {
             // eslint-disable-next-line no-param-reassign,operator-assignment
-            res.data.fields.timeoriginalestimate = res.data.fields.timeoriginalestimate / 3600;
+            res.data.fields.timeoriginalestimate = (res.data.fields.timeoriginalestimate / 3600).toFixed(1);
             this.subTasks = [res.data];
             JiraService.getIssueByIdOrKey(res.data.fields.parent.id)
               .then((issue) => {
