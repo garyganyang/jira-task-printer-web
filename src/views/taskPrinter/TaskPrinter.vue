@@ -205,7 +205,7 @@
             <div style="width: 354px;margin:0 auto">
               <div id="printTask" class="jira-task">
                 <div class="summary bt bl br padding">
-                  {{ selectedIssue.fields.issuetype.name }}:[{{ selectedIssue.key }}]{{ selectedIssue.fields.summary }}
+                  {{ selectedIssue.fields.issuetype ? selectedIssue.fields.issuetype.name : '任务' }}:[{{ selectedIssue.key }}]{{ selectedIssue.fields.summary }}
                 </div>
                 <div class="flex bt bl br">
                   <div class="flex">
