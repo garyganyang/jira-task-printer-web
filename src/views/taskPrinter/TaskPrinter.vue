@@ -7,12 +7,14 @@
           <el-popover title="版本说明"
                       width="200"
                       trigger="hover">
+            <p>2022-03-17</p>
+            <p>1. 在打印卡上增加打印人和打印时间;</p>
             <p>2022-01-14</p>
             <p>1. 修复状态查询;</p>
             <p>2. 修复预估时间精度显示问题.</p>
             <p>3. 支持bug类型显示.</p>
             <p>4. 支持列排序.</p>
-            <el-button slot="reference" type="text">v 1.0.2</el-button>
+            <el-button slot="reference" type="text">v 1.0.3</el-button>
           </el-popover>
           <el-link href="http://192.168.0.45:8090/pages/viewpage.action?pageId=5767175"
                    type="warning"
@@ -205,7 +207,8 @@
             <div style="width: 354px;margin:0 auto">
               <div id="printTask" class="jira-task">
                 <div class="summary bt bl br padding">
-                  {{ selectedIssue.fields.issuetype ? selectedIssue.fields.issuetype.name : '任务' }}:[{{ selectedIssue.key }}]{{ selectedIssue.fields.summary }}
+                  {{ selectedIssue.fields.issuetype ? selectedIssue.fields.issuetype.name : '任务' }}:
+                  [{{ selectedIssue.key }}]{{ selectedIssue.fields.summary }}
                 </div>
                 <div class="flex bt bl br">
                   <div class="flex">
@@ -215,13 +218,14 @@
                     </div>
                   </div>
                   <div class="flex centralised">
-                    <div class="label padding bl">版本</div>
-                    <div class="value padding bl bold">
+                    <div class="label2 padding bl">版本</div>
+                    <div class="value2 padding bl bold">
                       {{ selectedIssue.fields.fixVersions.map(e=>e.name).join(',') || '-/-' }}
                     </div>
                   </div>
                 </div>
-                <div class="desc bt bl br padding font-sm">{{ selectedIssue.fields.description }}</div>
+                <div class="desc bt bl br padding font-sm">{{ myself.displayName + ' print @'+ queryTimeOfTask }}<br>
+                  {{ selectedIssue.fields.description }}</div>
                 <div class="flex bt bl br bb">
                   <div class="flex">
                     <div class="label padding">报告人</div>
@@ -257,7 +261,8 @@
                       </div>
                     </div>
                   </div>
-                  <div class="desc2 bt bl br padding font-sm">{{ item.fields.description }}</div>
+                  <div class="desc2 bt bl br padding font-sm">{{ myself.displayName + ' print @'+ queryTimeOfSubTask }}
+                    <br>{{ item.fields.description }}</div>
                   <div class="flex bt bl br">
                     <div class="flex">
                       <div class="label padding">报告人</div>
@@ -333,7 +338,9 @@ export default {
       },
       issuesStatusMap: {},
       myself: { avatarUrls: {} },
-      loading: false
+      loading: false,
+      queryTimeOfTask: '',
+      queryTimeOfSubTask: ''
     };
   },
   mounted() {
@@ -352,7 +359,7 @@ export default {
             });
           JiraService.getAllAgileBoard()
             .then((res) => {
-              this.projects = orderBy(res.data.values.filter(e => !e.name.includes('已结束')), 'name', 'desc');
+              this.projects = orderBy(res.data.values.filter(e => !e.name.includes('已结束')), 'name', 'asc');
               // this.projects = res.data.values;
             });
         })
@@ -412,6 +419,7 @@ export default {
         copyOfEachSubTask.fields.timeoriginalestimate = (theIssue.fields.timeoriginalestimate / 3600).toFixed(1);
         return copyOfEachSubTask;
       });
+      this.queryTimeOfTask = moment().format('MM-DD HH:mm');
     },
     // onSubTaskClick(row) {
     //   this.selectedIssue = row;
@@ -452,6 +460,7 @@ export default {
     },
     handleSubTasksSelectionChange(rows) {
       this.selectedSubTasks = rows;
+      this.queryTimeOfSubTask = moment().format('MM-DD HH:mm');
     }
   }
 };
