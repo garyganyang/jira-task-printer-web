@@ -389,7 +389,7 @@ export default {
       JiraService.getIssuesForSprint(this.formInline.projectId, sprintId)
         .then((res) => {
           this.allIssues = res.data.issues;
-          this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'id', 'desc');
+          this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'fields.customfield_10005', 'asc');
           this.issuesStatus = Array.from(new Set(res.data.issues.map(e => e.fields.status.name)));
           this.copyOfIssues = this.issues;
         })
