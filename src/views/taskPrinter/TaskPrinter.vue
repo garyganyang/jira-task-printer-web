@@ -4,9 +4,7 @@
       <el-row style="margin-top: 4px">
         <el-col :span="12" style="text-align: left;font-size: 24px;">
           Jira 任务打印程序
-          <el-popover title="版本说明"
-                      width="200"
-                      trigger="hover">
+          <el-popover title="版本说明" width="200" trigger="hover">
             <p>2022-03-17</p>
             <p>1. 在打印卡上增加打印人和打印时间;</p>
             <p>2022-01-14</p>
@@ -23,10 +21,9 @@
           </el-link>
         </el-col>
         <el-col :span="12" style="text-align: right; line-height: 32px">
-          <div class="grid-content bg-purple-light" style="display: inline-block;margin-right: 10px">你好，{{
-            myself.displayName }}
-          </div>
-          <el-button type="primary" size="small" @click="onConfig">登录配置</el-button>
+          <div class="grid-content bg-purple-light" style="display: inline-block;margin-right: 10px">你好，{{ myself.displayName }}</div>
+          <el-button v-if="loginLoading" :loading="loginLoading" type="primary" size="small" @click="onConfig">登录中</el-button>
+          <el-button v-else type="primary" size="small" @click="onConfig">登录配置</el-button>
         </el-col>
       </el-row>
     </el-header>
@@ -34,14 +31,8 @@
       <div class="operation-row">
         <el-form :inline="true" :model="formInline" size="small" class="" @submit.native.prevent>
           <el-form-item label="项目">
-            <el-select v-model="formInline.projectId"
-                       placeholder="选择项目"
-                       filterable
-                       @change="getAllSprints">
-              <el-option v-for="(item,index) in projects"
-                         :key="index"
-                         :label="item.name"
-                         :value="item.id"/>
+            <el-select v-model="formInline.projectId" placeholder="选择项目" filterable @change="getAllSprints">
+              <el-option v-for="(item,index) in projects" :key="index" :label="item.name" :value="item.id"/>
               <!-- <span class="ellipsis" style="float: left">{{ item.name }}</span>-->
               <!--<span style="float: right; color: #8492a6; font-size: 13px">
               {{ item.key }}</span>-->
@@ -49,27 +40,16 @@
             </el-select>
           </el-form-item>
           <el-form-item label="Sprint">
-            <el-select v-model="formInline.sprintId"
-                       placeholder="选择Sprint"
-                       @change="getIssuesForSprint">
-              <el-option v-for="(item,index) in sprints"
-                         :key="index"
-                         :label="item.name"
-                         :value="item.id">
+            <el-select v-model="formInline.sprintId" placeholder="选择Sprint" @change="getIssuesForSprint">
+              <el-option v-for="(item,index) in sprints" :key="index" :label="item.name" :value="item.id">
                 <span class="ellipsis-70" style="float: left" :title="item.name">{{ item.name }}</span>
-                <span style="float: right; color: #8492a6; font-size: 13px">
-                  {{ sprintsStatusMap[item.state] }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{ sprintsStatusMap[item.state] }}</span>
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="状态">
-            <el-select v-model="formInline.status"
-                       placeholder="任务状态"
-                       @change="getIssuesForStatus">
-              <el-option v-for="(item,index) in issuesStatus"
-                         :key="index"
-                         :label="item"
-                         :value="item"/>
+            <el-select v-model="formInline.status" placeholder="任务状态" @change="getIssuesForStatus">
+              <el-option v-for="(item,index) in issuesStatus" :key="index" :label="item" :value="item"/>
             </el-select>
           </el-form-item>
           <el-form-item label="任务Key">
@@ -214,29 +194,31 @@
                   <div class="flex">
                     <div class="label padding">Epic</div>
                     <div class="value padding bl">
-                      {{ selectedIssue.fields.epic?selectedIssue.fields.epic.name:'' }}
+                      {{ selectedIssue.fields.epic ? selectedIssue.fields.epic.name : '' }}
                     </div>
                   </div>
                   <div class="flex centralised">
                     <div class="label2 padding bl">版本</div>
                     <div class="value2 padding bl bold">
-                      {{ selectedIssue.fields.fixVersions.map(e=>e.name).join(',') || '-/-' }}
+                      {{ selectedIssue.fields.fixVersions.map(e => e.name).join(',') || '-/-' }}
                     </div>
                   </div>
                 </div>
-                <div class="desc bt bl br padding font-sm">{{ myself.displayName + ' print @'+ queryTimeOfTask }}<br>
-                  {{ selectedIssue.fields.description }}</div>
+                <div class="desc bt bl br padding font-sm">
+                  {{ myself.displayName + ' print @' + queryTimeOfTask }}<br>
+                  {{ selectedIssue.fields.description }}
+                </div>
                 <div class="flex bt bl br bb">
                   <div class="flex">
                     <div class="label padding">报告人</div>
                     <div class="value padding bl bold">
-                      {{ selectedIssue.fields.creator?selectedIssue.fields.creator.displayName:'' }}
+                      {{ selectedIssue.fields.creator ? selectedIssue.fields.creator.displayName : '' }}
                     </div>
                   </div>
                   <div class="flex">
                     <div class="label padding bl">经办人</div>
                     <div class="value padding bl bold">
-                      {{ selectedIssue.fields.assignee?selectedIssue.fields.assignee.displayName:'' }}
+                      {{ selectedIssue.fields.assignee ? selectedIssue.fields.assignee.displayName : '' }}
                     </div>
                   </div>
                 </div>
@@ -261,19 +243,21 @@
                       </div>
                     </div>
                   </div>
-                  <div class="desc2 bt bl br padding font-sm">{{ myself.displayName + ' print @'+ queryTimeOfSubTask }}
-                    <br>{{ item.fields.description }}</div>
+                  <div class="desc2 bt bl br padding font-sm">
+                    {{ myself.displayName + ' print @' + queryTimeOfSubTask }}
+                    <br>{{ item.fields.description }}
+                  </div>
                   <div class="flex bt bl br">
                     <div class="flex">
                       <div class="label padding">报告人</div>
                       <div class="value padding bl">
-                        {{ item.fields.creator?item.fields.creator.displayName:'' }}
+                        {{ item.fields.creator ? item.fields.creator.displayName : '' }}
                       </div>
                     </div>
                     <div class="flex">
                       <div class="label padding bl">经办人</div>
                       <div class="value bold padding bl">
-                        {{ item.fields.assignee?item.fields.assignee.displayName:'' }}
+                        {{ item.fields.assignee ? item.fields.assignee.displayName : '' }}
                       </div>
                     </div>
                   </div>
@@ -304,7 +288,8 @@
 
 <script>
 // @ is an alias to /src
-import { orderBy } from 'lodash';
+import {orderBy} from 'lodash';
+import { pinyin } from 'pinyin-pro'
 // import { getAction } from '@/service/axiosInterceptor';
 import JiraService from '@/service/JiraService';
 import * as moment from 'moment';
@@ -312,7 +297,7 @@ import DialogConfig from './DialogConfig.vue';
 
 export default {
   name: 'About',
-  components: { DialogConfig },
+  components: {DialogConfig},
   data() {
     return {
       moment,
@@ -326,7 +311,7 @@ export default {
       issuesStatus: [],
       selectedIssue: {
         fields: {
-          epic: { name: '' },
+          epic: {name: ''},
           fixVersions: []
         }
       },
@@ -337,45 +322,56 @@ export default {
         future: '未开始'
       },
       issuesStatusMap: {},
-      myself: { avatarUrls: {} },
+      myself: {avatarUrls: {}},
       loading: false,
+      loginLoading: false,
       queryTimeOfTask: '',
-      queryTimeOfSubTask: ''
+      queryTimeOfSubTask: '',
     };
   },
   mounted() {
     this.getAllProjects();
+    const myself = window.localStorage.getItem('JIRA_MY_PROFILE')
+    if (myself) {
+      this.myself = JSON.parse(myself)
+    }
   },
   methods: {
     onConfig() {
       this.$refs.DialogConfig.show();
     },
     getAllProjects() {
-      JiraService.login()
-        .then(() => {
-          JiraService.getMyself()
-            .then((res) => {
-              this.myself = res.data;
-            });
-          JiraService.getAllAgileBoard()
-            .then((res) => {
-              this.projects = orderBy(res.data.values.filter(e => !e.name.includes('已结束')), 'name', 'asc');
-              // this.projects = res.data.values;
-            });
-        })
-        .catch((reason) => {
-          this.$message.error(reason.response ? reason.response.data.errorMessages[0] : reason.message);
-          this.$refs.DialogConfig.show();
+      this.loginLoading = true
+      JiraService.login().then(() => {
+        JiraService.getMyself().then((res) => {
+          this.myself = res.data;
+          window.localStorage.setItem('JIRA_MY_PROFILE', JSON.stringify(res.data))
         });
+        JiraService.getAllAgileBoard().then((page1) => {
+          if (page1.data.isLast) {
+            this.projects = orderBy(page1.data.values.filter(e => !e.name.includes('已结束')), e=>pinyin(e.name, { pattern: 'initial' }), 'desc');
+            return
+          }
+          JiraService.getAllAgileBoard(50).then((page2) => {
+            console.log(pinyin(page2.data.values[0].name, { pattern: 'initial' }))
+            this.projects = orderBy([...page1.data.values, ...page2.data.values].filter(e => !e.name.includes('已结束')), e=>pinyin(e.name, { pattern: 'initial' }), 'desc  ');
+          })
+          // this.projects = res.data.values;
+        });
+      }).catch((reason) => {
+        this.$message.error(reason.response ? reason.response.data.errorMessages[0] : reason.message);
+        this.$refs.DialogConfig.show();
+      }).finally(() => {
+        this.loginLoading = false
+      });
     },
     getAllSprints(boardId) {
       this.formInline.sprintId = '';
       this.formInline.status = '';
       this.getAllIssue(boardId);
-      JiraService.getAllSprints(boardId)
-        .then((res) => {
-          this.sprints = res.data.values.reverse();
-        });
+      JiraService.getAllSprints(boardId).then((res) => {
+        this.sprints = res.data.values.reverse();
+      });
     },
     getAllIssue() {
       // JiraService.getAllIssue(boardId)
@@ -386,16 +382,14 @@ export default {
     getIssuesForSprint(sprintId) {
       this.formInline.status = '';
       this.loading = true;
-      JiraService.getIssuesForSprint(this.formInline.projectId, sprintId)
-        .then((res) => {
-          this.allIssues = res.data.issues;
-          this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'fields.customfield_10005', 'asc');
-          this.issuesStatus = Array.from(new Set(res.data.issues.map(e => e.fields.status.name)));
-          this.copyOfIssues = this.issues;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      JiraService.getIssuesForSprint(this.formInline.projectId, sprintId).then((res) => {
+        this.allIssues = res.data.issues;
+        this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'fields.customfield_10005', 'asc');
+        this.issuesStatus = Array.from(new Set(res.data.issues.map(e => e.fields.status.name)));
+        this.copyOfIssues = this.issues;
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     getIssuesForStatus(status) {
       this.loading = true;
@@ -430,29 +424,25 @@ export default {
       this.issues = [];
       this.subTasks = [];
       this.loading = true;
-      JiraService.getIssueByIdOrKey(this.formInline.key.toUpperCase())
-        .then((res) => {
-          if (res.data.fields.parent) {
-            // eslint-disable-next-line no-param-reassign,operator-assignment
-            res.data.fields.timeoriginalestimate = (res.data.fields.timeoriginalestimate / 3600).toFixed(1);
-            this.subTasks = [res.data];
-            JiraService.getIssueByIdOrKey(res.data.fields.parent.id)
-              .then((issue) => {
-                this.selectedIssue = issue.data;
-              });
-            return;
-          }
-          this.issues = [res.data];
-          res.data.fields.subtasks.forEach((eachSub) => {
-            JiraService.getIssueByIdOrKey(eachSub.id)
-              .then((issue) => {
-                this.allIssues.push(issue.data);
-              });
+      JiraService.getIssueByIdOrKey(this.formInline.key.toUpperCase()).then((res) => {
+        if (res.data.fields.parent) {
+          // eslint-disable-next-line no-param-reassign,operator-assignment
+          res.data.fields.timeoriginalestimate = (res.data.fields.timeoriginalestimate / 3600).toFixed(1);
+          this.subTasks = [res.data];
+          JiraService.getIssueByIdOrKey(res.data.fields.parent.id).then((issue) => {
+            this.selectedIssue = issue.data;
           });
-        })
-        .finally(() => {
-          this.loading = false;
+          return;
+        }
+        this.issues = [res.data];
+        res.data.fields.subtasks.forEach((eachSub) => {
+          JiraService.getIssueByIdOrKey(eachSub.id).then((issue) => {
+            this.allIssues.push(issue.data);
+          });
         });
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     printTask() {
       if (!this.selectedIssue) return;
@@ -466,127 +456,127 @@ export default {
 };
 </script>
 <style lang="less">
-  .el-table thead {
-    color: black !important;
+.el-table thead {
+  color: black !important;
+}
+
+.ellipsis-70 {
+  width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.el-header {
+  background-color: #205081 !important;
+  color: white !important;
+}
+
+.el-button--primary {
+  color: #FFF !important;
+  background-color: #3b7fc4 !important;
+  border-color: #3b7fc4 !important;
+}
+
+.operation-row {
+  text-align: left;
+}
+
+.graph {
+  height: 450px;
+  flex: 1;
+  background-color: rgba(65, 0, 0, 0.05);
+}
+
+.jira-task {
+  width: 350px;
+  text-align: left;
+
+  .flex-1 {
+    flex: 1;
   }
 
-  .ellipsis-70 {
-    width: 70%;
+  .centralised {
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ellipsis {
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .el-header {
-    background-color: #205081 !important;
-    color: white !important;
+  .padding {
+    padding: 4px;
   }
 
-  .el-button--primary {
-    color: #FFF !important;
-    background-color: #3b7fc4 !important;
-    border-color: #3b7fc4 !important;
+  .bt {
+    border-top: 1px solid black;
   }
 
-  .operation-row {
-    text-align: left;
+  .bl {
+    border-left: 1px solid black;
   }
 
-  .graph {
-    height: 450px;
-    flex: 1;
-    background-color: rgba(65, 0, 0, 0.05);
+  .br {
+    border-right: 1px solid black;
   }
 
-  .jira-task {
-    width: 350px;
-    text-align: left;
-
-    .flex-1 {
-      flex: 1;
-    }
-
-    .centralised {
-      justify-content: center;
-      align-items: center;
-    }
-
-    .ellipsis {
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .padding {
-      padding: 4px;
-    }
-
-    .bt {
-      border-top: 1px solid black;
-    }
-
-    .bl {
-      border-left: 1px solid black;
-    }
-
-    .br {
-      border-right: 1px solid black;
-    }
-
-    .bb {
-      border-bottom: 1px solid black;
-    }
-
-    .summary {
-      font-weight: bold;
-      font-size: 20px;
-      overflow: hidden;
-      display: -webkit-box;
-      text-overflow: ellipsis;
-      -webkit-line-clamp: 2; /*要显示的行数*/
-      -webkit-box-orient: vertical;
-    }
-
-    .sub-summary {
-      overflow: hidden;
-      display: -webkit-box;
-      text-overflow: ellipsis;
-      -webkit-line-clamp: 2; /*要显示的行数*/
-      -webkit-box-orient: vertical;
-    }
-
-    .flex {
-      display: flex;
-
-    }
-
-    .desc {
-      height: 110px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .desc2 {
-      height: 90px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .font-sm {
-      font-size: 12px;
-    }
-
-    .label {
-      width: 50px;
-    }
-
-    .bold {
-      font-weight: bold;
-    }
-
-    .value {
-      width: 110px;
-    }
-
-    .value2 {
-    }
+  .bb {
+    border-bottom: 1px solid black;
   }
+
+  .summary {
+    font-weight: bold;
+    font-size: 20px;
+    overflow: hidden;
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2; /*要显示的行数*/
+    -webkit-box-orient: vertical;
+  }
+
+  .sub-summary {
+    overflow: hidden;
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2; /*要显示的行数*/
+    -webkit-box-orient: vertical;
+  }
+
+  .flex {
+    display: flex;
+
+  }
+
+  .desc {
+    height: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .desc2 {
+    height: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .font-sm {
+    font-size: 12px;
+  }
+
+  .label {
+    width: 50px;
+  }
+
+  .bold {
+    font-weight: bold;
+  }
+
+  .value {
+    width: 110px;
+  }
+
+  .value2 {
+  }
+}
 </style>

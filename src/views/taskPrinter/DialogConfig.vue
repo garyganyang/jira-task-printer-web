@@ -1,6 +1,6 @@
 <template>
   <el-dialog :visible.sync="visible"
-             title="欢迎访问 JIRA任务打印程序"
+             title="请登录"
              append-to-body>
     <div class="dialog-body">
       <el-form ref="ruleForm"

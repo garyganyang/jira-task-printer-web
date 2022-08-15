@@ -7,7 +7,7 @@ import * as axiosService from './axiosInterceptor';
 const apiServe = {
   login() {
     const url = '/rest/auth/1/session';
-    const { username, credential } = JSON.parse(localStorage.getItem('TaskPrinterConf') || '{}');
+    const { username, credential } = JSON.parse(localStorage.getItem('TaskPrinterConf') || '{"username":"", "credential":""}');
     return axiosService.postAction(url, {
       username,
       password: base64.decode(`${credential}`),
@@ -17,8 +17,8 @@ const apiServe = {
     const url = '/rest/api/2/myself';
     return axiosService.getAction(url);
   },
-  getAllAgileBoard() {
-    const url = '/rest/agile/1.0/board';
+  getAllAgileBoard(startAt=0) {
+    const url = `/rest/agile/1.0/board?startAt=${startAt}`;
     // const data = JSON.parse(localStorage.getItem('TaskPrinterConf') || '{}');
     return axiosService.getAction(url, {
       headers: {
