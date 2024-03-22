@@ -2,7 +2,7 @@
   <el-container v-loading="loading">
     <el-header class="el-header" height="40px">
       <el-row style="margin-top: 4px">
-        <el-col :span="12" style="text-align: left;font-size: 24px;">
+        <el-col :span="12" style="text-align: left;font-size: 24px; color: #deebff">
           Jira 任务打印程序
           <el-popover title="版本说明" width="200" trigger="hover">
             <p>2022-03-17</p>
@@ -12,7 +12,7 @@
             <p>2. 修复预估时间精度显示问题.</p>
             <p>3. 支持bug类型显示.</p>
             <p>4. 支持列排序.</p>
-            <el-button slot="reference" type="text">v 1.0.3</el-button>
+            <el-button slot="reference" type="text" style="color: #deebff">v 1.0.3</el-button>
           </el-popover>
           <el-link href="http://192.168.0.45:8090/pages/viewpage.action?pageId=5767175"
                    type="warning"
@@ -20,7 +20,7 @@
                    style="margin-left: 10px">打印机驱动下载
           </el-link>
         </el-col>
-        <el-col :span="12" style="text-align: right; line-height: 32px">
+        <el-col :span="12" style="color: #deebff; text-align: right; line-height: 32px">
           <div class="grid-content bg-purple-light" style="display: inline-block;margin-right: 10px">你好，{{ myself.displayName }}</div>
           <el-button v-if="loginLoading" :loading="loginLoading" type="primary" size="small" @click="onConfig">登录中</el-button>
           <el-button v-else type="primary" size="small" @click="onConfig">登录配置</el-button>
@@ -95,29 +95,21 @@
               <el-table-column prop="fields.creator.displayName" sortable label="报告人" width="100"/>
               <el-table-column prop="fields.status.name" sortable label="状态" width="100" align="center" header-align="left">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.fields.status.name === '待办'"
+                  <el-tag v-if="['待办','待处理','开放'].includes(scope.row.fields.status.name)"
                           size="mini"
-                          type="info">待办
-                  </el-tag>
-                  <el-tag v-else-if="scope.row.fields.status.name === '待处理'"
-                          size="mini"
-                          type="info">待处理
+                          type="info">{{ scope.row.fields.status.name }}
                   </el-tag>
                   <el-tag v-else-if="scope.row.fields.status.name === '处理中'"
                           size="mini"
                           type="danger">处理中
                   </el-tag>
-                  <el-tag v-else-if="scope.row.fields.status.name === '完成'"
+                  <el-tag v-else-if="['完成','已解决'].includes(scope.row.fields.status.name)"
                           size="mini"
-                          type="warning">完成
-                  </el-tag>
-                  <el-tag v-else-if="scope.row.fields.status.name === '已解决'"
-                          size="mini"
-                          type="success">已解决
+                          type="success">{{ scope.row.fields.status.name }}
                   </el-tag>
                   <el-tag v-else-if="scope.row.fields.status.name === '直接关闭'"
                           size="mini"
-                          type="danger">直接关闭
+                          type="warning">直接关闭
                   </el-tag>
                   <span v-else>{{ scope.row.fields.status.name }}</span>
                 </template>
@@ -147,29 +139,21 @@
               <el-table-column prop="fields.creator.displayName" label="报告人" width="100"/>
               <el-table-column prop="fields.status.name" label="状态" width="100">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.fields.status.name === '待办'"
+                  <el-tag v-if="['待办','待处理','开放'].includes(scope.row.fields.status.name)"
                           size="mini"
-                          type="info">待办
-                  </el-tag>
-                  <el-tag v-else-if="scope.row.fields.status.name === '待处理'"
-                          size="mini"
-                          type="info">待处理
+                          type="info">{{ scope.row.fields.status.name }}
                   </el-tag>
                   <el-tag v-else-if="scope.row.fields.status.name === '处理中'"
                           size="mini"
                           type="danger">处理中
                   </el-tag>
-                  <el-tag v-else-if="scope.row.fields.status.name === '完成'"
+                  <el-tag v-else-if="['完成','已解决'].includes(scope.row.fields.status.name)"
                           size="mini"
-                          type="success">完成
-                  </el-tag>
-                  <el-tag v-else-if="scope.row.fields.status.name === '已解决'"
-                          size="mini"
-                          type="success">已解决
+                          type="success">{{ scope.row.fields.status.name }}
                   </el-tag>
                   <el-tag v-else-if="scope.row.fields.status.name === '直接关闭'"
                           size="mini"
-                          type="success">直接关闭
+                          type="warning">直接关闭
                   </el-tag>
                   <span v-else>{{ scope.row.fields.status.name }}</span>
                 </template>
@@ -467,14 +451,14 @@ export default {
 }
 
 .el-header {
-  background-color: #205081 !important;
+  background-color: #0747a6 !important;
   color: white !important;
 }
 
 .el-button--primary {
   color: #FFF !important;
-  background-color: #3b7fc4 !important;
-  border-color: #3b7fc4 !important;
+  background-color: #0052cc !important;
+  border-color: #deebff !important;
 }
 
 .operation-row {
