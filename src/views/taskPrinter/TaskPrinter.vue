@@ -80,7 +80,7 @@
                       @row-click="onIssueClick">
               <!--<el-table-column type="selection" width="55" align="center"/>-->
               <el-table-column prop="key" label="Key" sortable align="center" width="100"/>
-              <el-table-column prop="fields.issuetype.name" sortable label="任务类型" width="100" align="center" header-align="left">
+              <el-table-column prop="fields.issuetype.name" sortable label="任务类型" width="100" align="center">
                 <template slot-scope="scope">
                   <el-tag v-if="scope.row.fields.issuetype.name === '故障' || scope.row.fields.issuetype.name === 'Bug'"
                           size="mini"
@@ -89,11 +89,11 @@
                   <el-tag v-else size="mini" type="success">{{ scope.row.fields.issuetype.name }}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column prop="fields.summary" sortable label="任务名称"/>
-              <el-table-column prop="fields.sprint.name" label="Sprint" width="200"/>
-              <el-table-column prop="fields.assignee.displayName" sortable label="经办人" width="100"/>
-              <el-table-column prop="fields.creator.displayName" sortable label="报告人" width="100"/>
-              <el-table-column prop="fields.status.name" sortable label="状态" width="100" align="center" header-align="left">
+              <el-table-column prop="fields.summary" sortable label="任务名称" align="left" header-align="center"/>
+              <el-table-column prop="fields.sprint.name" label="Sprint" align="center" width="200"/>
+              <el-table-column prop="fields.assignee.displayName" sortable label="经办人" align="center" width="100"/>
+              <el-table-column prop="fields.creator.displayName" sortable label="报告人" align="center" width="100"/>
+              <el-table-column prop="fields.status.name" sortable label="状态" width="100" align="center">
                 <template slot-scope="scope">
                   <el-tag v-if="['待办','待处理','开放'].includes(scope.row.fields.status.name)"
                           size="mini"
@@ -114,7 +114,7 @@
                   <span v-else>{{ scope.row.fields.status.name }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="fields.status.name" sortable label="版本" width="120">
+              <el-table-column prop="fields.status.name" sortable label="版本" align="center" width="120">
                 <template slot-scope="scope">
                   <el-tag v-for="(item,index) in scope.row.fields.fixVersions"
                           :key="index"
@@ -122,6 +122,7 @@
                   </el-tag>
                 </template>
               </el-table-column>
+              <el-table-column prop="fields.epic.name" sortable label="Epic" align="center" width="120"/>
             </el-table>
             <el-table :data="subTasks"
                       border
@@ -133,11 +134,11 @@
                       @selection-change="handleSubTasksSelectionChange">
               <el-table-column type="selection" width="55" align="center"/>
               <el-table-column prop="key" label="Key" align="center" width="100"/>
-              <el-table-column prop="fields.summary" label="子任务名称"/>
-              <el-table-column prop="fields.timeoriginalestimate" label="预估时间(H)" width="100"/>
-              <el-table-column prop="fields.assignee.displayName" label="经办人" width="100"/>
-              <el-table-column prop="fields.creator.displayName" label="报告人" width="100"/>
-              <el-table-column prop="fields.status.name" label="状态" width="100">
+              <el-table-column prop="fields.summary" label="子任务名称" align="left" header-align="center"/>
+              <el-table-column prop="fields.timeoriginalestimate" label="预估时间(H)" align="left" width="100"/>
+              <el-table-column prop="fields.assignee.displayName" label="经办人" align="left" width="100"/>
+              <el-table-column prop="fields.creator.displayName" label="报告人" align="left" width="100"/>
+              <el-table-column prop="fields.status.name" label="状态" align="left" width="100">
                 <template slot-scope="scope">
                   <el-tag v-if="['待办','待处理','开放'].includes(scope.row.fields.status.name)"
                           size="mini"
@@ -368,7 +369,7 @@ export default {
       this.loading = true;
       JiraService.getIssuesForSprint(this.formInline.projectId, sprintId).then((res) => {
         this.allIssues = res.data.issues;
-        this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'fields.customfield_10005', 'asc');
+        this.issues = orderBy(res.data.issues.filter((e) => !e.fields.issuetype.subtask), 'fields.customfield_10100', 'asc');
         this.issuesStatus = Array.from(new Set(res.data.issues.map(e => e.fields.status.name)));
         this.copyOfIssues = this.issues;
       }).finally(() => {
